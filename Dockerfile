@@ -3,7 +3,23 @@ FROM microsoft/aspnetcore-build:2.0
 # Pin Kubernetes Kubectl v1.8.4 
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubectl && \
 	chmod +x ./kubectl && \
-	mv ./kubectl /bin/kubectl #/usr/local/bin/kubectl 
+	mv ./kubectl /bin/kubectl #/usr/local/bin/kubectl
+	
+RUN	apt-get update && \
+	apt-get install -y \
+     apt-transport-https \
+     ca-certificates \
+     curl \
+     gnupg2 \
+     software-properties-common
+
+RUN curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add - && \
+	apt-key fingerprint 0EBFCD88 && \
+	add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"	&& \
+	#apt-cache madison docker-ce to list docker versions available
+
+RUN apt-get install -y docker-ce=17.09.0~ce-0~debian && \
+	 rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 #Config Kubectl is up to you
 #kubectl config set-cluster <my.cluster.name> --server=<my.kubernetes.host>
