@@ -3,7 +3,7 @@ FROM microsoft/aspnetcore-build:2.0
 # Pin Kubernetes Kubectl v1.8.4 
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubectl && \
 	chmod +x ./kubectl && \
-	sudo mv ./kubectl /bin/kubectl #/usr/local/bin/kubectl 
+	mv ./kubectl /bin/kubectl #/usr/local/bin/kubectl 
 
 #Config Kubectl is up to you
 #kubectl config set-cluster <my.cluster.name> --server=<my.kubernetes.host>
