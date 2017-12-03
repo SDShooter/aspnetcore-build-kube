@@ -15,12 +15,11 @@ RUN	apt-get update && \
 
 RUN curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add - && \
 	apt-key fingerprint 0EBFCD88 && \
-	add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"	&& \
-	#apt-cache madison docker-ce to list docker versions available
-
-RUN apt-get install -y docker-ce=17.09.0~ce-0~debian && \
-	 rm -rf /var/lib/apt/lists/*
+	add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable" && \
+    apt-get install -y docker-ce=17.09.0~ce-0~debian && \
+	rm -rf /var/lib/apt/lists/*
 WORKDIR /app
+#apt-cache madison docker-ce to list docker versions available
 #Config Kubectl is up to you
 #kubectl config set-cluster <my.cluster.name> --server=<my.kubernetes.host>
 #kubectl config set-credentials <my.user> --username=$KUBERNETES_USERNAME --password=$KUBERNETES_PASSWORD
