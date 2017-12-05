@@ -1,12 +1,12 @@
 FROM microsoft/aspnetcore-build:2.0
 
 # Pin Kubernetes Kubectl v1.8.4 
-#RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubectl && \
-#	chmod +x ./kubectl && \
-#	mv ./kubectl /bin/kubectl #/usr/local/bin/kubectl
 
 #Prerequisites
-RUN	apt-get update && \
+RUN	curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubectl && \
+	chmod +x ./kubectl && \
+	mv ./kubectl /bin/kubectl && \
+	apt-get update && \
 	apt-get install -y \
       apt-transport-https \
       ca-certificates \
@@ -24,8 +24,6 @@ RUN	apt-get update && \
 	  google-cloud-sdk && \
 	rm -rf /var/lib/apt/lists/*
 
-# Update the package list and install the Cloud SDK
-
 WORKDIR /app
 #apt-cache madison docker-ce to list docker versions available
 #Config Kubectl is up to you
@@ -33,9 +31,12 @@ WORKDIR /app
 #kubectl config set-credentials <my.user> --username=$KUBERNETES_USERNAME --password=$KUBERNETES_PASSWORD
 #kubectl config set-context <my.context> --cluster=<my.cluster.name> --user=<my.user>
 #kubectl config use-context <my.context>
-#Update the deployment to use the new Docker image
+
+#Update a deployment to use the new Docker image
 #kubectl set image deployment/<my.app> <my.app>=<my.dockerhub.username>/<my.app>:$BITBUCKET_COMMIT
 
 #DEBUGGING USAGE 
-# mount your outer volume context '.' to /app folder in the container
+# mount your outer volume context '.' to /app folder in the container.
 #docker run -it -v ${PWD}:/app relicx74/aspnetcore-build-kube bash
+# If you need to run docker commands, you'll need to mount the docker socket as well.  
+#docker run -it -v ${PWD}:/app -v /var/run/docker.sock:/var/run/docker.sock relicx74/aspnetcore-build-kube bash
