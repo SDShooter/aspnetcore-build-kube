@@ -23,7 +23,7 @@ RUN	curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bi
 	  docker-ce=17.09.0~ce-0~debian \
 	  google-cloud-sdk && \
 	rm -rf /var/lib/apt/lists/*
-
+    
 WORKDIR /app
 #apt-cache madison docker-ce to list docker versions available
 #Config Kubectl is up to you
