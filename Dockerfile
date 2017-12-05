@@ -1,24 +1,35 @@
 FROM microsoft/aspnetcore-build:2.0
 
 # Pin Kubernetes Kubectl v1.8.4 
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubectl && \
-	chmod +x ./kubectl && \
-	mv ./kubectl /bin/kubectl #/usr/local/bin/kubectl
-	
+#RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubectl && \
+#	chmod +x ./kubectl && \
+#	mv ./kubectl /bin/kubectl #/usr/local/bin/kubectl
+
+#Prerequisites
 RUN	apt-get update && \
 	apt-get install -y \
      apt-transport-https \
      ca-certificates \
      curl \
      gnupg2 \
+	 lsb \
      software-properties-common
 
-#Pin Docker CE to 17.09.0~ce-0~debian
-RUN curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add - && \
-	add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable" && \
+#Add Google Cloud SDK, Docker from official sources
+RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+
+RUN 	echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+	curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add - && \
+	add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(CLOUD_SDK_VERSION -cs) stable" && \ 
 	apt-get update && \
 	apt-get install -y docker-ce=17.09.0~ce-0~debian && \
+	google-cloud-sdk && \
 	rm -rf /var/lib/apt/lists/*
+
+# Update the package list and install the Cloud SDK
+ 
+
 WORKDIR /app
 #apt-cache madison docker-ce to list docker versions available
 #Config Kubectl is up to you
