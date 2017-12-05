@@ -8,28 +8,25 @@ FROM microsoft/aspnetcore-build:2.0
 #Prerequisites
 RUN	apt-get update && \
 	apt-get install -y \
-     apt-transport-https \
-     ca-certificates \
-     curl \
-     gnupg2 \
-	 lsb \
-     software-properties-common
-
-#Add Google Cloud SDK, Docker from official sources
-RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
-
-RUN 	echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+      apt-transport-https \
+      ca-certificates \
+      curl \
+      gnupg2 \
+	  lsb \
+      software-properties-common && \
+    add-apt-repository "deb [arch=amd64] http://packages.cloud.google.com/apt cloud-sdk-$(lsb_release -c -s) main" && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
 	curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add - && \
-	add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable" 
-
-RUN	apt-get update && \
-	apt-get install -y docker-ce=17.09.0~ce-0~debian && \
-	google-cloud-sdk && \
+	add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable" && \
+	apt-get update && \
+	apt-get install -y 
+	  docker-ce=17.09.0~ce-0~debian \
+	  google-cloud-sdk && \
+	AUTO_ADDED_PACKAGES=`apt-mark showauto` && \
+	apt-get remove --purge -y $AUTO_ADDED_PACKAGES && \
 	rm -rf /var/lib/apt/lists/*
 
 # Update the package list and install the Cloud SDK
- 
 
 WORKDIR /app
 #apt-cache madison docker-ce to list docker versions available
